@@ -9,14 +9,8 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-avocados
-<<<<<<< HEAD
-here
-=======
-
 ```{r}
 avocados <- read.csv("avocado.csv")
 
 
 ```
->>>>>>> 3ef568d730f3e9526981d0eb2d7d44692f0ac609
