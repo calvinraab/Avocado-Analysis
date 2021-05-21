@@ -10,3 +10,9 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 avocados
+
+```{r}
+avocados <- read.csv("avocado.csv")
+
+
+```
