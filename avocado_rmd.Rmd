@@ -12,16 +12,17 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 avocados <- read.csv("avocado.csv")
 attach(avocados)
+
+# avocados.ts <- ts(avocados, start=c(2015,1), end=c(2018,15), frequency=52)
 ```
 
 # Introduction 
 
-- averageprice ~ date: how has the price of avocadoes changed over time?
+- averageprice ~ date: how has the price of avocados changed over time?
 - averageprice ~ region: how does average price vary with region?
 - averageprice ~ volume: is average price influenced by total volume demanded?
+- volume ~ season: how does volume vary with the seasons?
 - volume ~ region: which regions like avocados the most?
-
-
 
 # Description of the Data
 
