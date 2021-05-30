@@ -11,6 +11,32 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 avocados <- read.csv("avocado.csv")
-
+attach(avocados)
 
 ```
+
+# Introduction 
+
+
+# Description of the Data
+
+Our project uses historical data on aavocado prices and sales volume in U.S. markets between the years 2015 and 2018. This data is based on the weekly retail sales of Haas avocados reported by retailers' cash registers. It uses aggregation of data from multiple locations across the United States and multiple outlets including grocery, mass, club, drug, dollar and military. The average price is the per unit cost for each avocado and the Product Lookup codes indicate the total number sold for each type of Haas avocado. The following variables are included in the dataset:
+
+• Date - the date of the observation
+• AveragePrice - the average price of a single avocado
+• Type - conventional or organic
+• Year - the year
+• Region - the city or region of the observation
+• Total Volume - total number of avocados sold
+• 4046 - total number of avocados with PLU 4046 sold
+• 4225 - total number of avocados with PLU 4225 sold
+• 4770 - total number of avocados with PLU 4770 sold
+
+# Data Analysis/Model
+
+
+# Conclusions
+
+# Future Work
+
+# References
