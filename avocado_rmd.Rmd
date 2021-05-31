@@ -13,7 +13,17 @@ knitr::opts_chunk$set(echo = TRUE)
 avocados <- read.csv("avocado.csv")
 attach(avocados)
 
-# avocados.ts <- ts(avocados, start=c(2015,1), end=c(2018,15), frequency=52)
+
+library(xts)
+avocados$Date <- as.Date(avocados$Date)
+avocados.ts1 <- xts(avocados, avocados$Date)
+
+avocados.ts2 <- ts(avocados, start=c(2015,1), end=c(2018,15), frequency=52)
+
+library(lubridate)
+avocados.ts3= ts(avocados$Date, 
+   freq=52, 
+   start=decimal_date(ymd("2015-01-04")))
 ```
 
 # Introduction 
