@@ -1,6 +1,6 @@
 ---
-title: "avo_rmd"
-author: "Calvin Raab"
+title: "Project 2"
+author: "Nancie Kung, Calvin Raab, David Collier and Eitan Shimonovitz"
 date: "5/21/2021"
 output: html_document
 ---
