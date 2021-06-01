@@ -13,4 +13,8 @@ knitr::opts_chunk$set(echo = TRUE)
 avocados <- read.csv("avocado.csv")
 
 
+
+
+head(avocados)
+
 ```
