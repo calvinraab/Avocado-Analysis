@@ -16,6 +16,9 @@ attach(avocados)
 
 library(xts)
 avocados$Date <- as.Date(avocados$Date)
+
+avocados <- avocados %>% arrange(region, type, Date)
+
 avocados.ts1 <- xts(avocados, avocados$Date)
 
 avocados.ts2 <- ts(avocados, start=c(2015,1), end=c(2018,15), frequency=52)
@@ -26,6 +29,15 @@ avocados.ts3= ts(avocados$Date,
    start=decimal_date(ymd("2015-01-04")))
 ```
 
+
+```{r}
+library(dplyr)
+avocados_us_conventional <- avocados %>% dplyr::filter(region == "TotalUS", type == "conventional")
+
+avocados_us_conv.ts <- ts(avocados_us_conventional, frequency = 52, start = c(2015,1), end = c(2018,15))
+
+plot(avocados_us_conv.ts[,3])
+```
 # Introduction 
 
 - averageprice ~ date: how has the price of avocados changed over time?
