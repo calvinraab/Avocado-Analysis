@@ -7,6 +7,42 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+```
+
+# Introduction 
+In this project we will be analyzing Hass Avocados. 
+
+- averageprice ~ date: how has the price of avocados changed over time?
+- averageprice ~ region: how does average price vary with region?
+- averageprice ~ volume: is average price influenced by total volume demanded?
+- volume ~ season: how does volume vary with the seasons?
+- volume ~ region: which regions like avocados the most?
+
+# Description of the Data
+
+Our project uses historical data on avocado prices and sales volume in U.S. markets between the years 2015 and 2018. This data is based on the weekly retail sales of Haas avocados reported by retailers' cash registers. It contains an aggregation of data from multiple locations across the United States and multiple retail outlets. The average price is the per unit cost for each avocado and the Product Lookup code indicates the total number sold for a given type of Haas avocado. The following variables are included in the data set:
+
+• Date - the date of the observation
+• AveragePrice - the average price of a single avocado
+• Type - conventional or organic
+• Year - the year
+• Region - the city or region of the observation
+• Total Volume - total number of avocados sold
+• Hass.Small - total number of avocados with PLU 4046 sold (Small Hass Avocados)
+• Hass.Large - total number of avocados with PLU 4225 sold (Large Hass Avocados)
+• Hass.Extra.Large - total number of avocados with PLU 4770 sold (Extra Large Hass Avocados)
+
+# Load Data
+```{r}
+avocados <- read.csv("avocado.csv")
+attach(avocados)
+avocados <- avocados %>%
+  rename(
+    Hass.Small = X4046,
+    Hass.Large = X4225,
+    Hass.Extra.Large = X4770
+  )
 ```
 
 ```{r}
@@ -28,40 +64,42 @@ avocados.ts3= ts(avocados$Date,
    start=decimal_date(ymd("2015-01-04")))
 ```
 
-
+### Creating A Time Series 
 ```{r}
 library(dplyr)
 avocados_us_conventional <- avocados %>% dplyr::filter(region == "TotalUS", type == "conventional")
 
 avocados_us_conv.ts <- ts(avocados_us_conventional, frequency = 52, start = c(2015,1), end = c(2018,15))
-
-plot(avocados_us_conv.ts[,3])
 ```
-# Introduction 
 
-- averageprice ~ date: how has the price of avocados changed over time?
-- averageprice ~ region: how does average price vary with region?
-- averageprice ~ volume: is average price influenced by total volume demanded?
-- volume ~ season: how does volume vary with the seasons?
-- volume ~ region: which regions like avocados the most?
+# Exploratory Analysis 
+### Average Price of Avocados Over Time
+```{r}
+plot(avocados_us_conv.ts[,3], ylab = "Avocado Price", xlab = "Date")
+```
 
-# Description of the Data
 
-Our project uses historical data on avocado prices and sales volume in U.S. markets between the years 2015 and 2018. This data is based on the weekly retail sales of Haas avocados reported by retailers' cash registers. It contains an aggregation of data from multiple locations across the United States and multiple retail outlets. The average price is the per unit cost for each avocado and the Product Lookup code indicates the total number sold for a given type of Haas avocado. The following variables are included in the data set:
+### Difference In Number of Avocados Sold Overtime for Different Size Hass Avocados 
+```{r}
+plot((avocados_us_conv.ts[,5] / 1000000), ylab = "Avocados Sold (Millions)", xlab = "Date", main = "Number of S Avocados Sold")
+plot((avocados_us_conv.ts[,6] / 1000000), ylab = "Avocados Sold (Millions)", xlab = "Date", main = "Number of L Avocados Sold")
+plot((avocados_us_conv.ts[,7] / 1000000), ylab = "Avocados Sold (Millions)", xlab = "Date", main = "Number of XL Avocados Sold")
+```
 
-• Date - the date of the observation
-• AveragePrice - the average price of a single avocado
-• Type - conventional or organic
-• Year - the year
-• Region - the city or region of the observation
-• Total Volume - total number of avocados sold
-• 4046 - total number of avocados with PLU 4046 sold
-• 4225 - total number of avocados with PLU 4225 sold
-• 4770 - total number of avocados with PLU 4770 sold
+### Average Price By Region 
+```{r}
+avg_price_by_region <- aggregate(x = avocados$AveragePrice,
+          by = list(avocados$region),
+          FUN = mean)
+#Top 10 Most Expensive Regions
+slice(arrange(avg_price_by_region, desc(x)), 1:10)
+
+
+#Top 10 Least Expensive Regions
+slice(arrange(avg_price_by_region, x), 1:10)
+```
 
 # Data Analysis/Model
-
-
 
 # Conclusions
 
