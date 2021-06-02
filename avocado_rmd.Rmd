@@ -50,6 +50,7 @@ avocados <- read.csv("avocado.csv")
 attach(avocados)
 
 library(xts)
+library(ggplot2)
 avocados$Date <- as.Date(avocados$Date)
 
 avocados <- avocados %>% arrange(region, type, Date)
@@ -90,10 +91,14 @@ plot((avocados_us_conv.ts[,6] / 1000000), ylab = "Avocados Sold (Millions)", xla
 plot((avocados_us_conv.ts[,7] / 1000000), ylab = "Avocados Sold (Millions)", xlab = "Date", main = "Number of XL Avocados Sold")
 ```
 
-### Difference In Number of Avocados Sold Overtime for Conventional vs Organic Avocados
+### Difference In Number of Avocados Sold Over Time for Conventional vs Organic Avocados
 ```{r}
 plot((avocados_us_conv.ts[,4] / 1000000), ylab = "Avocados Sold (Millions)", xlab = "Date", main = "Number of Conventional Avocados Sold")
 plot((avocados_us_org.ts[,4] / 1000000), ylab = "Avocados Sold (Millions)", xlab = "Date", main = "Number of Organic Avocados Sold")
+
+#ggplot(avocados_us_conv.ts, aes(x = Date, y = Total.Volume)) +
+  #geom_line()
+
 ```
 
 Conventional avocados show stronger seasonality, with spikes in the beginning of the year, while organic avocados show a consistent upwards trend from 2015 - 2018.
