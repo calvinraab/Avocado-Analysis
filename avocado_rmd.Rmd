@@ -21,7 +21,11 @@ In this project we will be analyzing Haas Avocados.
 
 # Description of the Data
 
+<<<<<<< HEAD
 Our project uses historical data on avocado prices and sales volume in U.S. markets between the years 2015 and 2018. This data is based on the weekly retail sales of Haas avocados reported by retailers' cash registers. It contains an aggregation of data from multiple locations across the United States and multiple types of retail outlets. The average price is the per unit cost for each avocado and the Product Lookup code indicates the total number sold for a given type of Haas avocado. The following variables are included in the data set:
+=======
+Our project uses historical data on avocado prices and sales volume in U.S. markets between the years 2015 and 2018. This data is based on the weekly retail sales of Hass avocados reported by retailers' cash registers. It contains an aggregation of data from multiple locations across the United States and multiple retail outlets. The average price is the per unit cost for each avocado and the Product Lookup code indicates the total number sold for a given type of Haas avocado. The following variables are included in the data set:
+>>>>>>> b86137bba79f825c4b14bb8f8349a7de567c08eb
 
 • Date - the date of the observation
 • AveragePrice - the average price of a single avocado
@@ -45,12 +49,39 @@ avocados <- avocados %>%
   )
 ```
 
+<<<<<<< HEAD
+=======
+```{r}
+avocados <- read.csv("avocado.csv")
+attach(avocados)
+
+library(xts)
+library(ggplot2)
+avocados$Date <- as.Date(avocados$Date)
+
+avocados <- avocados %>% arrange(region, type, Date)
+
+avocados.ts1 <- xts(avocados, avocados$Date)
+
+avocados.ts2 <- ts(avocados, start=c(2015,1), end=c(2018,15), frequency=52)
+
+library(lubridate)
+avocados.ts3= ts(avocados$Date, 
+   freq=52, 
+   start=decimal_date(ymd("2015-01-04")))
+```
+
+>>>>>>> b86137bba79f825c4b14bb8f8349a7de567c08eb
 ### Creating A Time Series 
 ```{r}
 library(dplyr)
 avocados_us_conventional <- avocados %>% dplyr::filter(region == "TotalUS", type == "conventional")
 
-avocados_us_conv.ts <- ts(avocados_us_conventional, frequency = 52, start = c(2015,1), end = c(2018,15))
+avocados_us_conv.ts <- ts(avocados_us_conventional, frequency = 52, start = c(2015,1), end = c(2018,13))
+
+avocados_us_organic <- avocados %>% dplyr::filter(region == "TotalUS", type == "organic")
+avocados_us_org.ts <- ts(avocados_us_organic, frequency = 52, start = c(2015,1), end = c(2018,13))
+tail(avocados_us_org.ts)
 ```
 
 # Exploratory Analysis 
@@ -73,6 +104,18 @@ legend(2015, 23, legend=c("S Avocados", "L Avocados", "XL Avocados"),
        col=c("red", "green", "cyan"), lty=1:2, cex=0.6)
 
 ```
+
+### Difference In Number of Avocados Sold Over Time for Conventional vs Organic Avocados
+```{r}
+plot((avocados_us_conv.ts[,4] / 1000000), ylab = "Avocados Sold (Millions)", xlab = "Date", main = "Number of Conventional Avocados Sold")
+plot((avocados_us_org.ts[,4] / 1000000), ylab = "Avocados Sold (Millions)", xlab = "Date", main = "Number of Organic Avocados Sold")
+
+#ggplot(avocados_us_conv.ts, aes(x = Date, y = Total.Volume)) +
+  #geom_line()
+
+```
+
+Conventional avocados show stronger seasonality, with spikes in the beginning of the year, while organic avocados show a consistent upwards trend from 2015 - 2018.
 
 ### Average Price By Region 
 ```{r}
