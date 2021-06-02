@@ -110,7 +110,7 @@ y <- avocados_us_conv.ts[, "Total.Bags"]
 ar_mod1 <- ar(y, aic = FALSE, order.max=2, method="ols")
 summary(ar_mod1)
 ar_mod1
-forecast(ar_mod1, 3)
+forecast(ar_mod1, 52)
 ```
 
 # Conclusions
