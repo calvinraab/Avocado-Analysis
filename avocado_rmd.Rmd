@@ -74,7 +74,6 @@ avocados_us_conv.ts <- ts(avocados_us_conventional, frequency = 52, start = c(20
 
 avocados_us_organic <- avocados %>% dplyr::filter(region == "TotalUS", type == "organic")
 avocados_us_org.ts <- ts(avocados_us_organic, frequency = 52, start = c(2015,1), end = c(2018,13))
-tail(avocados_us_org.ts)
 ```
 
 # Exploratory Analysis 
@@ -94,14 +93,14 @@ legend(2015, 23, legend=c("S Avocados", "L Avocados", "XL Avocados"),
 
 ### Difference In Number of Avocados Sold Over Time for Conventional vs Organic Avocados
 ```{r}
-plot((avocados_us_conv.ts[,4] / 1000000), ylab = "Avocados Sold (Millions)", xlab = "Date", main = "Number of Conventional Avocados Sold")
-plot((avocados_us_org.ts[,4] / 1000000), ylab = "Avocados Sold (Millions)", xlab = "Date", main = "Number of Organic Avocados Sold")
+par(mfrow=c(2,2))
+plot((avocados_us_conv.ts[,4] / 1000000), ylab = "Avocados Sold (Millions)", xlab = "Date", main = "Number of Conventional Avocados Sold", col = "brown")
+plot((avocados_us_org.ts[,4] / 1000000), ylab = "Avocados Sold (Millions)", xlab = "Date", main = "Number of Organic Avocados Sold", col = "green")
 
-# ggplot(avocados_us_conv.ts, aes(x = Date, y = Total.Volume)) + geom_line()
 
 ```
 
-Conventional avocados show stronger seasonality, with spikes in the beginning of the year, while organic avocados show a consistent upwards trend from 2015 - 2018.
+Conventional avocados show strong seasonality, with spikes in the beginning of the year, while organic avocados show a consistent upwards trend from 2015 - 2018. Organic avocados appear to show their seasonality through severe dips at the end of the year, in the beginning of winter.
 
 ### Average Price By Region 
 ```{r}
@@ -114,6 +113,9 @@ slice(arrange(avg_price_by_region, desc(x)), 1:10)
 #Top 10 Least Expensive Regions
 slice(arrange(avg_price_by_region, x), 1:10)
 ```
+
+
+# Data Analysis/Model
 
 ### AR Process 
 ```{r}
@@ -133,17 +135,22 @@ corrplot(M, method = "circle")
 ```
 In order to see if this avocado data is cyclical, we will look at the ACF of both the Average Price and the Total Volume of our avocados. We set the lag to be maxed at 52, because there are 52 weeks in a year. From the ACF is can be seen that in the middle of the year there isn't much correlation, however near the end of the year we start to see significant statistical correlation. This tells us that there appears to be a cyclical, yearly relationship between our data. This means that data from 12 months ago can help predict the data of today. 
 ```{r}
-acf(AveragePrice.ts, lag.max = 52)
-acf(TotalVolume.ts, lag.max = 52)
+tsdisplay(AveragePrice.ts, lag.max = 52)
+tsdisplay(TotalVolume.ts, lag.max = 52)
 
 ```
 
+The pattern of decreasing ACF with a single spike at lag = 1 for the PACF shows the pattern of an AR(1) process for average price. 
+
 ### Prediction with our AR model 
-Here is an AR prediction model. We built a model to predict average price. The data we fed into our model was subseted so we could use the final 5 results to test how accurate our model is. From the results below it can be seen that our prediction model did a good job and all of our confidence intervals created by the ar model held the actual prices. 
+Here is an AR prediction model. We built a model to predict average price. The data we fed into our model was subsetted so we could use the final 5 results to test how accurate our model is. From the results below it can be seen that our prediction model did a good job and all of our confidence intervals created by the ar model held the actual prices. 
 ```{r}
 avo.ar <- ar(AveragePrice.ts[1:164], aic = FALSE, order.max=4, method = "ols")
 summary(avo.ar)
 print(avo.ar) # Here you can see the two coefficients of the two lags 
+
+
+plot(forecast(avo.ar, 5))
 
 #forcast 2 steps-ahead 
 forecast(avo.ar, 5)
@@ -152,8 +159,37 @@ forecast(avo.ar, 5)
 AveragePrice.ts[165:169]
 ```
 
+
+### Using Seasonality With AR(1) Model
+
+The ACF and PACF for average price show clear seasonality year-over-year, which is to be expected with produce such as avocados. As such, we investigated including seasonality in our model to account for this effect, with AR(1) and MA(1) seasonality.
+```{r}
+seasonal_model <- Arima(AveragePrice.ts, order = c(1,0,0), seasonal = list(order=c(1,0,1), period = 52))
+
+seasonal_model
+
+plot(AveragePrice.ts)
+lines(fitted(seasonal_model), col = "green")
+```
+
+We can see that the fitted values follow the data very closely. Next, we use the seasonal model to predict average price for the next year.
+
+```{r}
+plot(forecast(seasonal_model,52))
+```
+
+We see that the predicted price follows the seasonal trend of rising thoughout the year, then falling at the end of the year as we expect. This matches up with our knowledge of avocados being cheapest in the winter months and rising in price during the rest of the year. We also looked into forecasting with the built-in exponential smoothing capabilities of the forecast() function.
+
+```{r}
+plot(forecast(AveragePrice.ts, 52))
+
+```
+
+The exponentially smoothed prediction also follows the seasonal trend, but predicts that the trend of average price will actually decrease in the next year, which we do not believe to be likely. 
+
+
 ### Buidling an ARDL model 
-Below is an ARDL(4,4) model. We built this model to see the statistical significance lags of both average price and total volume would have on predicting average price. We chose a lag of 4, for that represents one months worth of lags. The findings here are interesting in that lags of average price appeared to be less statistically significant than lags of volume. It appears as though lags of total volume are more statistically significant for predicting average price than lags of avergae price. 
+Below is an ARDL(4,4) model. We built this model to see the statistical significance lags of both average price and total volume would have on predicting average price. We chose a lag of 4, for that represents one months worth of lags. The findings here are interesting in that lags of average price appeared to be less statistically significant than lags of volume. It appears as though lags of total volume are more statistically significant for predicting average price than lags of average price. 
 ```{r}
 # ARDL(4,4)
 avo.ardl <- dynlm(AveragePrice.ts ~ L(AveragePrice.ts,1:4) + L(TotalVolume.ts, 0:4))
@@ -161,7 +197,7 @@ summary(avo.ardl)
 ```
 
 ### Testing Instrumental Variables 
-Using our subject mater expertise on avocados we thought to test total bags as an instrumental variable. The reason for this is we believed total bags to be a good indicator of total.volume, but not necessarily of price. We created that IV test below. From our new model that takes into consideration total bags, it can be seen that there isn't much change in the significance of our parameters, suggesting that total bags is a weaker IV. 
+Using our subject mater expertise on avocados we thought to test total bags as an instrumental variable. The reason for this is we believed total bags to be a good indicator of total volume, but not necessarily of price. We created that IV test below. From our new model that takes into consideration total bags, it can be seen that there isn't much change in the significance of our parameters, suggesting that total bags is a weaker IV. 
 ```{r}
 # This will only run if the second 
 # Before testing total bags as an IV 
@@ -175,7 +211,8 @@ summary(total.bags.iv)
 ```
 
 
-# Data Analysis/Model
+
+
 
 # Conclusions
 
