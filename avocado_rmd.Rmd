@@ -118,27 +118,14 @@ forecast(ar_mod1, 52)
 <<<<<<< HEAD
 ### AR Model
 In order to see if this avocado data is cyclical, we will look at the ACF of both the Average Price and the Total Volume of our avocados. We set the lag to be maxed at 52, because there are 52 weeks in a year. From the ACF is can be seen that in the middle of the year there isn't much correlation, however near the end of the year we start to see significant statistical correlation. This tells us that there appears to be a cyclical, yearly relationship between our data. This means that data from 12 months ago can help predict the data of today. 
-=======
+
 ### AR Process 
->>>>>>> e5f5b904d39d59c75ef2f06aef5969e2818f2e80
+In order to see if this avocado data is cyclical, we will look at the ACF of both the Average Price and the Total Volume of our avocados. We set the lag to be maxed at 52, because there are 52 weeks in a year. From the ACF is can be seen that in the middle of the year there isn't much correlation, however near the end of the year we start to see significant statistical correlation. This tells us that there appears to be a cyclical, yearly relationship between our data. This means that data from 12 months ago can help predict the data of today. 
 ```{r}
 library(tseries)
 library(forecast)
 AveragePrice.ts <- avocados_us_conv.ts[,3]
 TotalVolume.ts <- avocados_us_conv.ts[,4]
-tsdisplay(avocados_us_conv.ts[,3])
-reg <- dynlm(AveragePrice.ts~L(AveragePrice.ts, 0:3))
-reg <- dynlm(TotalVolume.ts~L(TotalVolume.ts, 0:3))
-
-summary(reg)
-library(corrplot)
-M <- cor(avocados_us_conv.ts)
-corrplot(M, method = "circle")
-```
-
-  
-In order to see if this avocado data is cyclical, we will look at the ACF of both the Average Price and the Total Volume of our avocados. We set the lag to be maxed at 52, because there are 52 weeks in a year. From the ACF is can be seen that in the middle of the year there isn't much correlation, however near the end of the year we start to see significant statistical correlation. This tells us that there appears to be a cyclical, yearly relationship between our data. This means that data from 12 months ago can help predict the data of today. 
-```{r}
 tsdisplay(AveragePrice.ts, lag.max = 52)
 tsdisplay(TotalVolume.ts, lag.max = 52)
 ```
@@ -223,11 +210,8 @@ summary(no.iv.mod)
 # Total Bags is the IV we are testing 
 library(AER)
 total.bags.iv <- ivreg(AveragePrice ~ Total.Volume + Hass.Small + Hass.Large + Hass.Extra.Large | Hass.Small + Hass.Large + Hass.Extra.Large + Total.Bags, data = avocados_us_conventional)
-<<<<<<< HEAD
-=======
 summary(total.bags.iv)
 
->>>>>>> e5f5b904d39d59c75ef2f06aef5969e2818f2e80
 ```
 
 # Conclusions
