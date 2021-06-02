@@ -20,12 +20,7 @@ In this project we will be analyzing Haas Avocados.
 - volume ~ region: which regions like avocados the most?
 
 # Description of the Data
-
-<<<<<<< HEAD
 Our project uses historical data on avocado prices and sales volume in U.S. markets between the years 2015 and 2018. This data is based on the weekly retail sales of Haas avocados reported by retailers' cash registers. It contains an aggregation of data from multiple locations across the United States and multiple types of retail outlets. The average price is the per unit cost for each avocado and the Product Lookup code indicates the total number sold for a given type of Haas avocado. The following variables are included in the data set:
-=======
-Our project uses historical data on avocado prices and sales volume in U.S. markets between the years 2015 and 2018. This data is based on the weekly retail sales of Hass avocados reported by retailers' cash registers. It contains an aggregation of data from multiple locations across the United States and multiple retail outlets. The average price is the per unit cost for each avocado and the Product Lookup code indicates the total number sold for a given type of Haas avocado. The following variables are included in the data set:
->>>>>>> b86137bba79f825c4b14bb8f8349a7de567c08eb
 
 • Date - the date of the observation
 • AveragePrice - the average price of a single avocado
@@ -49,29 +44,27 @@ avocados <- avocados %>%
   )
 ```
 
-<<<<<<< HEAD
-=======
+### Creating TS V1
 ```{r}
-avocados <- read.csv("avocado.csv")
-attach(avocados)
+#avocados <- read.csv("avocado.csv")
+#attach(avocados)
 
-library(xts)
-library(ggplot2)
-avocados$Date <- as.Date(avocados$Date)
+#library(xts)
+#library(ggplot2)
+#avocados$Date <- as.Date(avocados$Date)
 
-avocados <- avocados %>% arrange(region, type, Date)
+#avocados <- avocados %>% arrange(region, type, Date)
 
-avocados.ts1 <- xts(avocados, avocados$Date)
+#avocados.ts1 <- xts(avocados, avocados$Date)
 
-avocados.ts2 <- ts(avocados, start=c(2015,1), end=c(2018,15), frequency=52)
+#avocados.ts2 <- ts(avocados, start=c(2015,1), end=c(2018,15), frequency=52)
 
-library(lubridate)
-avocados.ts3= ts(avocados$Date, 
-   freq=52, 
-   start=decimal_date(ymd("2015-01-04")))
+#library(lubridate)
+#avocados.ts3= ts(avocados$Date, 
+#   freq=52, 
+#   start=decimal_date(ymd("2015-01-04")))
 ```
 
->>>>>>> b86137bba79f825c4b14bb8f8349a7de567c08eb
 ### Creating A Time Series 
 ```{r}
 library(dplyr)
@@ -93,12 +86,6 @@ plot(avocados_us_conv.ts[,3], ylab = "Avocado Price", xlab = "Date")
 
 ### Difference In Number of Avocados Sold Overtime for Different Size Haas Avocados 
 ```{r}
-plot((avocados_us_conv.ts[,5] / 1000000), ylab = "Avocados Sold (Millions)", xlab = "Date", main = "Number of S Avocados Sold")
-plot((avocados_us_conv.ts[,6] / 1000000), ylab = "Avocados Sold (Millions)", xlab = "Date", main = "Number of L Avocados Sold")
-plot((avocados_us_conv.ts[,7] / 1000000), ylab = "Avocados Sold (Millions)", xlab = "Date", main = "Number of XL Avocados Sold")
-
-
-# Calvin here is an alternative plot if you would like to use it
 ts.plot(avocados_us_conv.ts[,5:7]/1000000, gpars=list(col=rainbow(4)),ylab = "Avocados Sold (Millions)", xlab = "Date", main = "Number of Avocados Sold")
 legend(2015, 23, legend=c("S Avocados", "L Avocados", "XL Avocados"),
        col=c("red", "green", "cyan"), lty=1:2, cex=0.6)
@@ -110,8 +97,7 @@ legend(2015, 23, legend=c("S Avocados", "L Avocados", "XL Avocados"),
 plot((avocados_us_conv.ts[,4] / 1000000), ylab = "Avocados Sold (Millions)", xlab = "Date", main = "Number of Conventional Avocados Sold")
 plot((avocados_us_org.ts[,4] / 1000000), ylab = "Avocados Sold (Millions)", xlab = "Date", main = "Number of Organic Avocados Sold")
 
-#ggplot(avocados_us_conv.ts, aes(x = Date, y = Total.Volume)) +
-  #geom_line()
+# ggplot(avocados_us_conv.ts, aes(x = Date, y = Total.Volume)) + geom_line()
 
 ```
 
@@ -144,9 +130,50 @@ summary(reg)
 library(corrplot)
 M <- cor(avocados_us_conv.ts)
 corrplot(M, method = "circle")
-
+```
+In order to see if this avocado data is cyclical, we will look at the ACF of both the Average Price and the Total Volume of our avocados. We set the lag to be maxed at 52, because there are 52 weeks in a year. From the ACF is can be seen that in the middle of the year there isn't much correlation, however near the end of the year we start to see significant statistical correlation. This tells us that there appears to be a cyclical, yearly relationship between our data. This means that data from 12 months ago can help predict the data of today. 
+```{r}
+acf(AveragePrice.ts, lag.max = 52)
+acf(TotalVolume.ts, lag.max = 52)
 
 ```
+
+### Prediction with our AR model 
+Here is an AR prediction model. We built a model to predict average price. The data we fed into our model was subseted so we could use the final 5 results to test how accurate our model is. From the results below it can be seen that our prediction model did a good job and all of our confidence intervals created by the ar model held the actual prices. 
+```{r}
+avo.ar <- ar(AveragePrice.ts[1:164], aic = FALSE, order.max=4, method = "ols")
+summary(avo.ar)
+print(avo.ar) # Here you can see the two coefficients of the two lags 
+
+#forcast 2 steps-ahead 
+forecast(avo.ar, 5)
+
+#Compare to the actual next 5
+AveragePrice.ts[165:169]
+```
+
+### Buidling an ARDL model 
+Below is an ARDL(4,4) model. We built this model to see the statistical significance lags of both average price and total volume would have on predicting average price. We chose a lag of 4, for that represents one months worth of lags. The findings here are interesting in that lags of average price appeared to be less statistically significant than lags of volume. It appears as though lags of total volume are more statistically significant for predicting average price than lags of avergae price. 
+```{r}
+# ARDL(4,4)
+avo.ardl <- dynlm(AveragePrice.ts ~ L(AveragePrice.ts,1:4) + L(TotalVolume.ts, 0:4))
+summary(avo.ardl)
+```
+
+### Testing Instrumental Variables 
+Using our subject mater expertise on avocados we thought to test total bags as an instrumental variable. The reason for this is we believed total bags to be a good indicator of total.volume, but not necessarily of price. We created that IV test below. From our new model that takes into consideration total bags, it can be seen that there isn't much change in the significance of our parameters, suggesting that total bags is a weaker IV. 
+```{r}
+# This will only run if the second 
+# Before testing total bags as an IV 
+no.iv.mod <- lm(AveragePrice ~ Total.Volume + Hass.Small + Hass.Large + Hass.Extra.Large, data = avocados_us_conventional)
+summary(no.iv.mod)
+
+# Total Bags is the IV we are testing 
+library(AER)
+total.bags.iv <- ivreg(AveragePrice ~ Total.Volume + Hass.Small + Hass.Large + Hass.Extra.Large | Hass.Small + Hass.Large + Hass.Extra.Large + Total.Bags, data = avocados_us_conventional)
+summary(total.bags.iv)
+```
+
 
 # Data Analysis/Model
 
