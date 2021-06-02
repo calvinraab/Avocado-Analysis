@@ -149,6 +149,8 @@ avo.ar <- ar(AveragePrice.ts[1:164], aic = FALSE, order.max=4, method = "ols")
 summary(avo.ar)
 print(avo.ar) # Here you can see the two coefficients of the two lags 
 
+plot(AveragePrice.ts)
+lines(time(AveragePrice.ts)[1:164],AveragePrice.ts[1:164] - avo.ar$resid, col = "green")
 
 plot(forecast(avo.ar, 5))
 
@@ -166,7 +168,7 @@ The ACF and PACF for average price show clear seasonality year-over-year, which 
 ```{r}
 seasonal_model <- Arima(AveragePrice.ts, order = c(1,0,0), seasonal = list(order=c(1,0,1), period = 52))
 
-seasonal_model
+summary(seasonal_model)
 
 plot(AveragePrice.ts)
 lines(fitted(seasonal_model), col = "green")
