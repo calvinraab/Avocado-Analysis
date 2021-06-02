@@ -151,7 +151,6 @@ summary(seasonal_model)
 plot(AveragePrice.ts)
 lines(fitted(seasonal_model), col = "green")
 
-AveragePrice.ts
 ```
 
 We can see that the fitted values follow the data very closely. Next, we use the seasonal model to predict average price for the next year.
