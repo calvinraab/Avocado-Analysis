@@ -8,7 +8,6 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
-library(PoEdata)
 library(tseries)
 library(forecast)
 library(dynlm)
@@ -210,11 +209,16 @@ Based on our analysis, we make the following key conclusions:
 • Both average price and total volume follow an AR process, in which present values of the time series are related to past values.
 • Current average price can be explained by recent lags in average price and total volume.
 • We can predict the the short-term future average price given that it follows a seasonal pattern.
-
+• The price of avocados throughout the year follows a consistent seasonal pattern of rising until a peak in early fall, then dropping to its lowest point at the end of the year. As such, we would advise consumers to avoid purchasing avocados in late summer and early fall, then get plenty of avocados during the winter for holiday and Super Bowl guacamole. 
+• This seasonal effect was weak in 2015 but became more prominent in following years. It's possible that external weather factors during the later years reduced the yield of out-of-season avocados, though the true reason is unclear in our data.
 
 # Future Work
 For our future work, we believe we can improve on our model by testing the performance of our model. We can do this by using cross validation, in which we would divide our data into training and testing sets in order to evaluate how well our model performed. This evaluation can inform us if we should restructure our model to improve its accuracy.
 
-In addition, we believe that it would useful to account for other variables that could explain changes in avocado price and volume. For example, we could integrate information on weather patterns and economic conditions to provide context for our interpretations. This would help us explain the trends in the data within a bigger picture. 
+We also would like to further investigate the difference between conventional and organic avocados. While conventional makes up the vast majority of the marketplace, we saw that the trends were different for the two types, so it would be interesting to look into the effect of the increasing popularity of organic produce on the avocado market.
+
+In addition, we believe that it would useful to account for other variables not included in this dataset that could explain changes in avocado price and volume. For example, we could integrate information on weather patterns and economic conditions to provide context for our interpretations. This would help us explain the trends in the data within a bigger picture. 
 
 # References
+
+Avocado data from kaggle: https://www.kaggle.com/neuromusic/avocado-prices
