@@ -82,6 +82,18 @@ avocados_us_org.ts <- ts(avocados_us_organic, frequency = 52, start = c(2015,1),
 ```
 
 # Exploratory Analysis 
+When creating our time series above we chose to us "TotalUS" as the regiona and "conventional" as the type for we believed that was the best representation of our data. To back up our decision we looked at a breakdown of this dataset to see what percent was conventional verse what percent was organic. Here it can be seen that 97% of the avocados recorded in this dataset are conventional, hense why we went with it. 
+```{r}
+volume_check <- avocados %>% 
+  group_by(type) %>% 
+  summarise(avgerage_volume=mean(Total.Volume))  %>% 
+  mutate(Percent=proportions(avgerage_volume) * 100) 
+
+volume_check
+```
+
+
+
 ### Average Price of Avocados Over Time
 ```{r}
 plot(avocados_us_conv.ts[,3], ylab = "Avocado Price", xlab = "Date")
