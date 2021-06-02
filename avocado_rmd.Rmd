@@ -54,24 +54,16 @@ avocados_us_org.ts <- ts(avocados_us_organic, frequency = 52, start = c(2015,1),
 ```
 
 # Exploratory Analysis 
-When creating our time series above we chose to us "TotalUS" as the region and "conventional" as the type for we believed that was the best representation of our data. To back up our decision we looked at a breakdown of this dataset to see what percent was conventional versus what percent was organic. Here it can be seen that 97% of the avocados recorded in this dataset are conventional, hence why we chose to use it. 
-```{r}
-volume_check <- avocados %>% 
-  group_by(type) %>% 
-  summarise(avgerage_volume=mean(Total.Volume))  %>% 
-  mutate(Percent=proportions(avgerage_volume) * 100) 
-
-volume_check
-```
-
 
 ### Average Price of Avocados Over Time
+From the graph below it can be seen that prices appear to spike around the early summer months, right prior to the halfway point in the year. This means that avocados are at their peak price right around now. 
 ```{r}
 plot(avocados_us_conv.ts[,3], ylab = "Avocado Price", xlab = "Date")
 ```
 
 
 ### Difference In Number of Avocados Sold Overtime for Different Size Haas Avocados 
+From the graph below it can be seen that small and large avocados appear to track one another closely and are relatively close in number of avocados sold. This graph also demonstrates that XL avocados do not sell nearly as many as small and large avocados. Small and large avocados also appear to spike around the same time.
 ```{r}
 ts.plot(avocados_us_conv.ts[,5:7]/1000000, gpars=list(col=rainbow(4)),ylab = "Avocados Sold (Millions)", xlab = "Date", main = "Number of Avocados Sold")
 legend(2015, 23, legend=c("S Avocados", "L Avocados", "XL Avocados"),
@@ -79,6 +71,7 @@ legend(2015, 23, legend=c("S Avocados", "L Avocados", "XL Avocados"),
 ```
 
 ### Difference In Number of Avocados Sold Over Time for Conventional vs Organic Avocados
+From the graph below it can be seen that avocado sails have increased throughout the years. 
 ```{r}
 par(mfrow=c(2,2))
 plot((avocados_us_conv.ts[,4] / 1000000), ylab = "Avocados Sold (Millions)", xlab = "Date", main = "Number of Conventional Avocados Sold", col = "brown")
@@ -88,6 +81,7 @@ plot((avocados_us_org.ts[,4] / 1000000), ylab = "Avocados Sold (Millions)", xlab
 Conventional avocados show strong seasonality, with spikes in the beginning of the year, while organic avocados show a consistent upwards trend from 2015 - 2018. Organic avocados appear to show their seasonality through severe dips at the end of the year, in the beginning of winter.
 
 ### Average Price By Region 
+According to the data if you wish to by avocados at the cheapest price, you should go to Houston. 
 ```{r}
 avg_price_by_region <- aggregate(x = avocados$AveragePrice,
           by = list(avocados$region),
