@@ -145,6 +145,8 @@ library(corrplot)
 M <- cor(avocados_us_conv.ts)
 corrplot(M, method = "circle")
 ```
+
+  
 In order to see if this avocado data is cyclical, we will look at the ACF of both the Average Price and the Total Volume of our avocados. We set the lag to be maxed at 52, because there are 52 weeks in a year. From the ACF is can be seen that in the middle of the year there isn't much correlation, however near the end of the year we start to see significant statistical correlation. This tells us that there appears to be a cyclical, yearly relationship between our data. This means that data from 12 months ago can help predict the data of today. 
 ```{r}
 tsdisplay(AveragePrice.ts, lag.max = 52)
