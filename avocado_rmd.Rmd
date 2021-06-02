@@ -55,7 +55,7 @@ avocados_us_org.ts <- ts(avocados_us_organic, frequency = 52, start = c(2015,1),
 ```
 
 # Exploratory Analysis 
-When creating our time series above we chose to us "TotalUS" as the regiona and "conventional" as the type for we believed that was the best representation of our data. To back up our decision we looked at a breakdown of this dataset to see what percent was conventional verse what percent was organic. Here it can be seen that 97% of the avocados recorded in this dataset are conventional, hense why we went with it. 
+When creating our time series above we chose to us "TotalUS" as the region and "conventional" as the type for we believed that was the best representation of our data. To back up our decision we looked at a breakdown of this dataset to see what percent was conventional versus what percent was organic. Here it can be seen that 97% of the avocados recorded in this dataset are conventional, hence why we chose to use it. 
 ```{r}
 volume_check <- avocados %>% 
   group_by(type) %>% 
@@ -66,17 +66,13 @@ volume_check
 ```
 
 
-
 ### Average Price of Avocados Over Time
 ```{r}
 plot(avocados_us_conv.ts[,3], ylab = "Avocado Price", xlab = "Date")
 ```
 
-<<<<<<< HEAD
-### Difference In Number of Avocados Sold Overtime for Different Size Hass Avocados 
-=======
+
 ### Difference In Number of Avocados Sold Overtime for Different Size Haas Avocados 
->>>>>>> e5f5b904d39d59c75ef2f06aef5969e2818f2e80
 ```{r}
 ts.plot(avocados_us_conv.ts[,5:7]/1000000, gpars=list(col=rainbow(4)),ylab = "Avocados Sold (Millions)", xlab = "Date", main = "Number of Avocados Sold")
 legend(2015, 23, legend=c("S Avocados", "L Avocados", "XL Avocados"),
@@ -97,6 +93,7 @@ Conventional avocados show strong seasonality, with spikes in the beginning of t
 avg_price_by_region <- aggregate(x = avocados$AveragePrice,
           by = list(avocados$region),
           FUN = mean)
+
 #Top 10 Most Expensive Regions
 slice(arrange(avg_price_by_region, desc(x)), 1:10)
 
@@ -115,10 +112,6 @@ ar_mod1
 forecast(ar_mod1, 52)
 ```
 
-<<<<<<< HEAD
-### AR Model
-In order to see if this avocado data is cyclical, we will look at the ACF of both the Average Price and the Total Volume of our avocados. We set the lag to be maxed at 52, because there are 52 weeks in a year. From the ACF is can be seen that in the middle of the year there isn't much correlation, however near the end of the year we start to see significant statistical correlation. This tells us that there appears to be a cyclical, yearly relationship between our data. This means that data from 12 months ago can help predict the data of today. 
-
 ### AR Process 
 In order to see if this avocado data is cyclical, we will look at the ACF of both the Average Price and the Total Volume of our avocados. We set the lag to be maxed at 52, because there are 52 weeks in a year. From the ACF is can be seen that in the middle of the year there isn't much correlation, however near the end of the year we start to see significant statistical correlation. This tells us that there appears to be a cyclical, yearly relationship between our data. This means that data from 12 months ago can help predict the data of today. 
 ```{r}
@@ -129,7 +122,7 @@ TotalVolume.ts <- avocados_us_conv.ts[,4]
 tsdisplay(AveragePrice.ts, lag.max = 52)
 tsdisplay(TotalVolume.ts, lag.max = 52)
 ```
-The pattern of a steadily decreasing ACF with a single spike at lag = 1 for the PACF shows the pattern of an AR(1) process for average price. 
+The pattern of a steadily decreasing ACF with a single spike at lag = 1 for the PACF shows the pattern of an AR(1) process for average price. In addition, the pattern of a steadily decreasing ACF with multiple spikes at lag = 1,2,3,13,14 suggest a higher order AR process for average volume. 
 
 ### Prediction with our AR model 
 Here is an AR prediction model. We built a model to predict average price. The data we fed into our model was subsetted so we could use the final 5 results to test how accurate our model is. From the results below it can be seen that our prediction model did a good job and all of our confidence intervals created by the AR model contained the actual prices. 
@@ -179,7 +172,7 @@ The exponentially smoothed prediction also follows the seasonal trend, but predi
 
 
 ### Buidling an ARDL model 
-Below is an ARDL(4,4) model. We built this model to see the statistical significance lags of both average price and total volume would have on predicting average price. We chose a lag of 4, for that represents one months worth of lags. The findings here are interesting in that lags of average price appeared to be less statistically significant than lags of volume. It appears as though lags of total volume are more statistically significant for predicting average price than lags of average price. 
+Below is an ARDL(4,4) model. We built this model to see the statistical significance lags of both average price and total volume would have on predicting average price. We chose a lag of 4, for that represents one months worth of lags. The findings here are interesting in that lags of average price appeared to be less statistically significant than lags of volume. It appears that average price from 1 week ago, current total volume, and total volume from 1 week ago are statistically significant in explaining the current average price.
 ```{r}
 # ARDL(4,4)
 avo.ardl <- dynlm(AveragePrice.ts ~ L(AveragePrice.ts,1:4) + L(TotalVolume.ts, 0:4))
@@ -188,7 +181,7 @@ summary(avo.ardl)
 
 ### Testing for Serially Correlation
 
-Here we test whether the ARDL(4,4) model above violates the assumption that the errors are serially correlated. Looking at the ACF and PACF plots for the model's residuals, we do not see any distinctive pattern which suggests that the errors are not serially correlated. The Breusch-Godfrey test for higher order serial correlation also suggests that there is no serial correlation in the model, since the high p-value means that we fail the reject the null. This means that we do not have to correct for serial correlation.
+Here we test whether the ARDL model above violates the assumption that the errors are serially correlated. Looking at the ACF and PACF plots for the model's residuals, we do not see any distinctive pattern which suggests that the errors are not serially correlated. The Breusch-Godfrey test for higher order serial correlation also suggests that there is no serial correlation in the model, since the high p-value means that we fail the reject the null. This means that we do not have to correct for serial correlation.
 
 ```{r}
 library(tseries)
@@ -212,7 +205,11 @@ summary(total.bags.iv)
 ```
 
 # Conclusions
+Based on our analysis, we make the following key conclusions:
 
+• Both average price and total volume follow an AR process, in which present values of the time series are related to past values.
+• Current average price can be explained by recent lags in average price and total volume.
+• We can predict the the short-term future average price given that it follows a seasonal pattern.
 
 
 # Future Work
