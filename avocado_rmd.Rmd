@@ -16,7 +16,7 @@ library(lmtest)
 ```
 
 # Introduction 
-In this project, we will be analyzing Hass Avocados. Our objective is to use a time series to explain how the average price and total volume of Hass avocados have changed over time. First, we  explored the data by looking at measures such as the changes in price and volume and the popularity of avocados by region. We then created AR and ARDL model to examine the patterns in price and volume in the past. We also used these models to make predictions about how price and volume would change in the future. Below, we show our analysis. 
+In this project, we will be analyzing Hass Avocados. Our objective is to use a time series to explain how the average price and total volume of Hass avocados have changed over time. First, we explored the data by looking at measures such as the changes in price and volume and the popularity of avocados by region. We then created an AR and ARDL model to examine the patterns in price and volume in the past. We also used these models to make predictions about how price and volume would change in the future. Below, we show our analysis. 
 
 # Description of the Data
 Our project uses historical data on avocado prices and sales volume in U.S. markets between the years 2015 and 2018. This data is based on the weekly retail sales of Hass avocados reported by retailers' cash registers. It contains an aggregation of data from multiple locations across the United States and multiple types of retail outlets. The average price is the per unit cost for each avocado and the Product Lookup code indicates the total number sold for a given type of Hass avocado. The following variables are included in the data set:
@@ -161,7 +161,6 @@ summary(seasonal_model)
 
 plot(AveragePrice.ts)
 lines(fitted(seasonal_model), col = "green")
-
 ```
 
 We can see that the fitted values follow the data very closely. Next, we use the seasonal model to predict average price for the next year.
@@ -185,13 +184,11 @@ Below is an ARDL(4,4) model. We built this model to see the statistical signific
 # ARDL(4,4)
 avo.ardl <- dynlm(AveragePrice.ts ~ L(AveragePrice.ts,1:4) + L(TotalVolume.ts, 0:4))
 summary(avo.ardl)
-
-bgtest(avo.ardl, order=1, type="F", fill=0)
 ```
 
 ### Testing for Serially Correlation
 
-Here we test whether the ARDL(4,4) model above violates the assumption that the errors are serially correlated. Looking at the ACF and PACF plots for the model's residuals, we do not see any distinctive pattern which suggests that the errors are not serially correlated. The Breusch Godfrey test for higher-order serial correlation also suggests that there is no serial correlation in the model, since the high p-value means that we fail the reject the null. 
+Here we test whether the ARDL(4,4) model above violates the assumption that the errors are serially correlated. Looking at the ACF and PACF plots for the model's residuals, we do not see any distinctive pattern which suggests that the errors are not serially correlated. The Breusch-Godfrey test for higher order serial correlation also suggests that there is no serial correlation in the model, since the high p-value means that we fail the reject the null. This means that we do not have to correct for serial correlation.
 
 ```{r}
 library(tseries)
@@ -216,7 +213,11 @@ summary(total.bags.iv)
 
 # Conclusions
 
-# Future Work
 
+
+# Future Work
+For our future work, we believe we can improve on our model by testing the performance of our model. We can do this by using cross validation, in which we would divide our data into training and testing sets in order to evaluate how well our model performed. This evaluation can inform us if we should restructure our model to improve its accuracy.
+
+In addition, we believe that it would useful to account for other variables that could explain changes in avocado price and volume. For example, we could integrate information on weather patterns and economic conditions to provide context for our interpretations. This would help us explain the trends in the data within a bigger picture. 
 
 # References
