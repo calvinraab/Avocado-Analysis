@@ -121,7 +121,6 @@ slice(arrange(avg_price_by_region, x), 1:10)
 
 # Data Analysis/Model
 
-<<<<<<< HEAD
 ```{r}
 y <- avocados_us_conv.ts[, "Total.Bags"]
 ar_mod1 <- ar(y, aic = FALSE, order.max=2, method="ols")
@@ -130,7 +129,6 @@ ar_mod1
 forecast(ar_mod1, 52)
 ```
 
-=======
 ### AR Process 
 ```{r}
 library(tseries)
@@ -228,10 +226,6 @@ summary(total.bags.iv)
 ```
 
 
-
-
-
->>>>>>> 3769bb5caff3e9345948e8515e59872787002601
 # Conclusions
 
 # Future Work
