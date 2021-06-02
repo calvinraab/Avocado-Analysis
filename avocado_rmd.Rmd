@@ -158,6 +158,7 @@ Below is an ARDL(4,4) model. We built this model to see the statistical signific
 # ARDL(4,4)
 avo.ardl <- dynlm(AveragePrice.ts ~ L(AveragePrice.ts,1:4) + L(TotalVolume.ts, 0:4))
 summary(avo.ardl)
+
 ```
 
 ### Testing Instrumental Variables 
