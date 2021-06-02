@@ -8,6 +8,10 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
+library(PoEdata)
+library(tseries)
+library(forecast)
+library(dynlm)
 ```
 
 # Introduction 
@@ -115,6 +119,14 @@ slice(arrange(avg_price_by_region, x), 1:10)
 
 # Data Analysis/Model
 
+```{r}
+y <- avocados_us_conv.ts[, "Total.Bags"]
+ar_mod1 <- ar(y, aic = FALSE, order.max=2, method="ols")
+summary(ar_mod1)
+ar_mod1
+forecast(ar_mod1, 52)
+```
+
 ### AR Process 
 In order to see if this avocado data is cyclical, we will look at the ACF of both the Average Price and the Total Volume of our avocados. We set the lag to be maxed at 52, because there are 52 weeks in a year. From the ACF is can be seen that in the middle of the year there isn't much correlation, however near the end of the year we start to see significant statistical correlation. This tells us that there appears to be a cyclical, yearly relationship between our data. This means that data from 12 months ago can help predict the data of today. 
 ```{r}
@@ -183,6 +195,7 @@ Below is an ARDL(4,4) model. We built this model to see the statistical signific
 avo.ardl <- dynlm(AveragePrice.ts ~ L(AveragePrice.ts,1:4) + L(TotalVolume.ts, 0:4))
 summary(avo.ardl)
 
+<<<<<<< HEAD
 bgtest(avo.ardl, order=1, type="F", fill=0)
 ```
 
@@ -194,6 +207,8 @@ Here we test whether the ARDL(4,4) model above violates the assumption that the 
 library(tseries)
 tsdisplay(avo.ardl$residuals)
 bgtest(avo.ardl, order=1, type="F", fill=0)
+=======
+>>>>>>> e5a3f1e43af0deb1a5cf02629a3b03e77a30d103
 ```
 
 ### Testing Instrumental Variables 
@@ -207,7 +222,11 @@ summary(no.iv.mod)
 # Total Bags is the IV we are testing 
 library(AER)
 total.bags.iv <- ivreg(AveragePrice ~ Total.Volume + Hass.Small + Hass.Large + Hass.Extra.Large | Hass.Small + Hass.Large + Hass.Extra.Large + Total.Bags, data = avocados_us_conventional)
+<<<<<<< HEAD
 
+=======
+summary(total.bags.iv)
+>>>>>>> e5a3f1e43af0deb1a5cf02629a3b03e77a30d103
 ```
 
 
