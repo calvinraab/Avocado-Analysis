@@ -2,7 +2,9 @@
 title: "Project 2"
 author: "Nancie Kung, Calvin Raab, David Collier and Eitan Shimonovitz"
 date: "6/02/2021"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -12,6 +14,7 @@ library(tseries)
 library(forecast)
 library(dynlm)
 library(lmtest)
+library(knitr)
 ```
 
 # Introduction 
