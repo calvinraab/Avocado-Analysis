@@ -1,2 +1,1 @@
-# project2
-This is a repo for project 2.
+Avocado price predicition tool. This is a project for Econ 104. 
